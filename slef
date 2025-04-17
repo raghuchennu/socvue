@@ -1,6 +1,85 @@
-i have wake up at 6 am
-i have done bath at 7 am
-hey you can take t brake for at 730 am
-i have bf at 8 am
-i went to office at 9 am
-i have taken lunch at 12 pm
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template for Sandbox VPC with three private subnets
+
+Parameters:
+  VpcCIDR:
+    Type: String
+    Default: "10.20.0.0/16"
+    Description: The CIDR block for the VPC
+
+  PrivateSubnet1CIDR:
+    Type: String
+    Default: "10.20.1.0/24"
+    Description: CIDR block for Private Subnet 1
+
+  PrivateSubnet2CIDR:
+    Type: String
+    Default: "10.20.2.0/24"
+    Description: CIDR block for Private Subnet 2
+
+  PrivateSubnet3CIDR:
+    Type: String
+    Default: "10.20.3.0/24"
+    Description: CIDR block for Private Subnet 3
+
+Resources:
+
+  SandboxVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: "sandbox-vpc"
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SandboxVPC
+      CidrBlock: !Ref PrivateSubnet1CIDR
+      AvailabilityZone: !Select [ 0, !GetAZs "" ]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: "sandbox-private-subnet-1"
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SandboxVPC
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      AvailabilityZone: !Select [ 1, !GetAZs "" ]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: "sandbox-private-subnet-2"
+
+  PrivateSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SandboxVPC
+      CidrBlock: !Ref PrivateSubnet3CIDR
+      AvailabilityZone: !Select [ 2, !GetAZs "" ]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: "sandbox-private-subnet-3"
+
+Outputs:
+  VPCId:
+    Description: The VPC ID
+    Value: !Ref SandboxVPC
+
+  Subnet1Id:
+    Description: Private Subnet 1 ID
+    Value: !Ref PrivateSubnet1
+
+  Subnet2Id:
+    Description: Private Subnet 2 ID
+    Value: !Ref PrivateSubnet2
+
+  Subnet3Id:
+    Description: Private Subnet 3 ID
+    Value: !Ref PrivateSubnet3
